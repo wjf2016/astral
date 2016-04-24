@@ -5,13 +5,13 @@
     <div class="manage-star" v-if="star.hasOwnProperty('id')">
       <div class="edit-star-tags">
           <div class="dropdown-wrap">
-            <button class="toggle-tag-editor" @click="tagEditorShowing = !tagEditorShowing"><i class="fa fa-tag"></i> Edit Tags</button>
+            <button class="edit-star-button toggle-tag-editor" @click="tagEditorShowing = !tagEditorShowing"><i class="fa fa-tag"></i> Edit Tags</button>
             <div>
               <tag-editor :tags="tagList" :class="{'active': tagEditorShowing}"></tag-editor>
             </div>
           </div>
       </div>
-      <button class="toggle-tag-editor" @click="noteEditorShowing = !noteEditorShowing"><i class="fa fa-sticky-note"></i> Notes</button>
+      <button class="edit-star-button toggle-tag-editor" @click="noteEditorShowing = !noteEditorShowing"><i class="fa fa-sticky-note"></i> Notes</button>
       <div class="clone-url">
         <label for="txtGitHubCloneURL">Clone:</label>
         <input type="text" id="txtGitHubCloneURL" :value="star.ssh_url" readonly/>
@@ -72,19 +72,13 @@ export default {
       })[0];
     },
     tagList(){
-      return this.tags.map( (tag) => {
-        let isSelected = false;
-        if( this.userStar && this.userStar.tags ){
-          isSelected = this.userStar.tags.map(function(tag){
-            return tag.id;
-          }).indexOf(tag.id) > -1;
-        }
-        return {
-          id: tag.id,
-          text: tag.name,
-          selected: isSelected
-        }
-      });
+      if( this.userStar && this.userStar.tags ){
+        return this.userStar.tags.map((tag) => {
+          return tag.name;
+        });
+      } else {
+        return [];
+      }
     }
   },
   methods: {

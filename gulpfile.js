@@ -3,6 +3,7 @@ var sass = require("gulp-sass");
 var notify = require("gulp-notify");
 var uglify = require("gulp-uglify");
 var sourcemaps = require("gulp-sourcemaps");
+var gutil = require("gulp-util");
 var browserify = require("browserify");
 var watchify = require("watchify");
 var babelify = require("babelify");
@@ -43,6 +44,10 @@ function scripts(){
   console.time("Bundling finished");
   return bundler
     .bundle()
+    .on("error", function (err) {
+      gutil.log(err.toString());
+      this.emit("end");
+    })
     .on("end", function(){ console.timeEnd("Bundling finished") })
     .pipe(source("app.bundle.js"))
     .pipe(buffer())

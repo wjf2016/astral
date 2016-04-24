@@ -168,7 +168,7 @@
       margin-left: 20px;
       position: relative; top: -2px;
     }
-    button:not(.btn-flat) {
+    .edit-star-button {
       @include appearance( none );
       background: #fff;
       background-clip: padding-box;

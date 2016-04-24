@@ -1,27 +1,37 @@
 import Vue from "vue";
-import $ from "jquery";
-import select2 from "select2";
+import Taggle from "taggle";
+let taggle = null;
 Vue.directive("tag-select", {
-  bind: function(){
-  },
-  update: function(value){
+  params: ["tags", "autocomplete"],
+  bind: function(){},
+  update: function(val) {
     let self = this;
-    if( $(this.el).data("select2") ){
-      $("[data-select2-tag]").remove();
-    }
-    setTimeout( () => {
-      $(this.el).select2({
-        tags: true,
-        tokenSeparators: [","],
-        minimumInputLength: 2,
-        placeholder: "Add a tag",
-      }).on("change", function(){
-        let tagData = $(this).select2("data").map(function(tag){ return {name: tag.text} });
-        self.vm.$dispatch("CURRENT_TAGS_CHANGED", tagData);
+    setTimeout(function(){
+      taggle = new Taggle(self.el.id, {
+        tags: self.params.tags,
+        preserveCase: true,
+        onTagAdd: function(e, tag){
+          let tagArray = taggle.getTagValues().map((t) => {
+            return { name: t }
+          });
+          self.vm.$dispatch("CURRENT_TAGS_CHANGED", tagArray);
+        },
+        onTagRemove: function(e, tag){
+          let tagArray = taggle.getTagValues().map((t) => {
+            return { name: t }
+          });
+          self.vm.$dispatch("CURRENT_TAGS_CHANGED", tagArray);
+        }
       });
-    }, 0);
+      document.querySelector(".taggle_input").focus();
+    }, 10);
   },
-  unbind: function(){
-    $(this.el).off().select2("destroy")
+  paramWatchers: {
+    tags: function(val, oldVal){
+      taggle.removeAll()
+      setTimeout(function(){
+        taggle.add(val);
+      }, 0);
+    }
   }
 });
