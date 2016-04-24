@@ -23,7 +23,6 @@ Vue.directive("tag-select", {
           self.vm.$dispatch("CURRENT_TAGS_CHANGED", tagArray);
         }
       });
-      document.querySelector(".taggle_input").focus();
     }, 10);
   },
   paramWatchers: {
