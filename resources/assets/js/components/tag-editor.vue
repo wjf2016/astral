@@ -1,6 +1,6 @@
 <template>
   <div class="tag-editor dropdown">
-    <div id="tags-editor" v-tag-select :tags="tags"></div>
+    <div id="tags-editor" v-tag-select :tags="tags", :autocomplete="autocomplete"></div>
     <button type="button" name="button" class="tag-editor--save-tags btn-flat" @click="syncTags">Save Tags</button>
   </div>
 </template>
@@ -9,7 +9,7 @@ import Vue from "vue";
 import "../directives/tag-select.js";
 export default {
   name: "TagEditor",
-  props: ["tags"],
+  props: ["tags", "autocomplete"],
   data(){
     return {
       tagsToSync: []
@@ -128,5 +128,29 @@ export default {
   top: -500px;
   z-index: -1;
   visibility: hidden;
+}
+
+.autocomplete-suggestions {
+  background: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(#000, 0.08);
+  border-top: 0;
+  box-shadow: 0 1px 2px rgba(#000, 0.05);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  cursor: default;
+  margin-top: -1px;
+  text-align: left;
+  /* core styles should not be changed */
+  position: absolute; display: none; z-index: 9999; max-height: 254px; overflow: hidden; overflow-y: auto; box-sizing: border-box;
+}
+.autocomplete-suggestion { position: relative; padding: 0 .6em; line-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: #333; }
+.autocomplete-suggestion b {
+  font-weight: normal;
+  text-decoration: underline;
+}
+.autocomplete-suggestion.selected {
+  background: $sea-green;
+  color: #fff;
 }
 </style>

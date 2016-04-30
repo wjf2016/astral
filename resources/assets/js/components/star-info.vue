@@ -7,7 +7,7 @@
           <div class="dropdown-wrap">
             <button class="edit-star-button toggle-tag-editor" @click="tagEditorShowing = !tagEditorShowing"><i class="fa fa-tag"></i> Edit Tags</button>
             <div>
-              <tag-editor :tags="tagList" :class="{'active': tagEditorShowing}"></tag-editor>
+              <tag-editor :tags="tagList" :autocomplete="autocompleteList" :class="{'active': tagEditorShowing}"></tag-editor>
             </div>
           </div>
       </div>
@@ -40,10 +40,10 @@ export default {
   name: "StarInfo",
   vuex: {
     getters: {
-      readme: readme,
-      stars: stars,
+      readme,
+      stars,
+      tags,
       star: currentStar,
-      tags: tags
     },
     actions: {
       editStarNotes,
@@ -79,6 +79,11 @@ export default {
       } else {
         return [];
       }
+    },
+    autocompleteList() {
+      return this.tags.map( (tag) => {
+        return tag.name;
+      });
     }
   },
   methods: {
