@@ -35,6 +35,7 @@ export const fetchGithubStars = ({ dispatch, state, actions }, page = 1) => {
       if(data.cached) { dispatch(types.SET_CACHED_PAGES, data.cached); }
       if( state.github.cachedPages && state.github.cachedPages === state.github.totalPages ) {
         dispatch(types.SET_GITHUB_STARS, data.stars);
+        fetchTags({dispatch});
         resolve();
         return false
       }
@@ -47,10 +48,12 @@ export const fetchGithubStars = ({ dispatch, state, actions }, page = 1) => {
       }
       if(currentPage <= state.github.totalPages) {
         dispatch(types.SET_GITHUB_STARS, data.stars);
+        fetchTags({dispatch});
         fetchGithubStars({dispatch, state}, currentPage);
       }
       else {
         dispatch(types.SET_GITHUB_STARS, data.stars);
+        fetchTags({dispatch});
         resolve();
       }
     });
