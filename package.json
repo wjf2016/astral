@@ -23,8 +23,10 @@
     ]
   },
   "dependencies": {
+    "awesomplete": "^1.1.1",
     "dragula": "^3.6.3",
     "es6-promise": "^4.0.5",
+    "fuzzysearch": "^1.0.3",
     "highlight.js": "^9.5.0",
     "jquery": "^2.2.0",
     "js-base64": "^2.1.9",
