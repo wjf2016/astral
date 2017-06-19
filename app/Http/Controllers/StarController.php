@@ -69,11 +69,11 @@ class StarController extends Controller
             $star->removeAllTags();
         } else {
             foreach ($tags as $tag) {
-                $tagName = strtolower($tag['name']);
+                $tagName = strtolower($tag);
                 $userTag = Tag::whereName($tagName)->first();
                 if (! $userTag) {
                     $userTag = new Tag();
-                    $userTag->name = $tag['name'];
+                    $userTag->name = $tag;
                     $userTag->save();
                 }
                 array_push($tagIds, $userTag->id);

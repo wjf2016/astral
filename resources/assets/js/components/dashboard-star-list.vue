@@ -2,7 +2,16 @@
   <div class="dashboard-star-container">
     <div class="dashboard-repos">
       <ul class="repos">
-        <star v-for="(repo, index) in starsList" :key="repo.id" :repo="repo"></star>
+        <star
+          v-for="(repo, index) in starsList"
+          :key="repo.id"
+          :data-index="index"
+          :repo="repo"
+          :tags="tags"
+          :is-active="currentStar.id === repo.id"
+          @click="starClicked"
+        >
+        </star>
       </ul>
     </div>
     <div>
@@ -26,7 +35,9 @@ export default {
     ...mapGetters({
       user: 'user',
       githubStars: 'githubStars',
+      currentStar: 'currentStar',
       currentTag: 'currentTag',
+      tags: 'tags',
       tagFilter: 'tagFilter',
       searchQuery: 'tokenizedSearchQuery'
     }),
@@ -60,11 +71,16 @@ export default {
   methods: {
     ...mapActions([
       'fetchStars',
+      'setCurrentStar',
       'setCurrentTag',
       'cleanupStars'
     ]),
-    setTag (tag) {
-      this.$router.push(`/dashboard/tag/${tag.slug}`)
+    starClicked (star) {
+      if (star.id === this.currentStar.id) {
+        return false
+      }
+      this.setCurrentStar(star)
+      this.$bus.$emit('STAR_CHANGED')
     },
     starHasCurrentTag (repo) {
       if (!Object.keys(this.currentTag).length) {

@@ -2,14 +2,14 @@
   <div class="dashboard-repo-details">
     <div class="empty-placeholder" v-show="!currentStar.hasOwnProperty('id')">No Repo Selected</div>
     <div class="manage-star" v-if="currentStar.hasOwnProperty('id')">
-      <div class="edit-star-tags">
+      <!--<div class="edit-star-tags">
           <div class="dropdown-wrap">
             <button class="toggle-tag-editor" @click="tagEditorShowing = !tagEditorShowing"><i class="fa fa-tag"></i> Edit Tags</button>
             <div>
               <tag-editor :tags="tagList" :class="{'active': tagEditorShowing}" v-on-clickaway="clickedAwayFromTagEditor"></tag-editor>
             </div>
           </div>
-      </div>
+      </div>-->
       <button class="toggle-notes-editor" @click="noteEditorShowing = !noteEditorShowing"><i class="fa fa-sticky-note"></i> Notes</button>
       <div class="clone-url">
         <label for="txtGitHubCloneURL" @click="focusCloneInput">Clone:</label>

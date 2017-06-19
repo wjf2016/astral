@@ -163,11 +163,13 @@
     width: 100%;
   }
   .manage-star {
+    display: flex;
+    align-items: center;
     width: 100%; height: 45px;
     background: #fafafa;
     border-bottom: 1px solid rgba(#373570, 0.1);
     box-shadow: 0 1px 3px rgba(#373570, 0.08);
-    line-height: 45px;
+    padding: 0 20px;
     position: absolute;
     z-index: 99;
     label {
@@ -241,8 +243,7 @@
       }
     }
     .clone-url {
-      float: right;
-      position: relative; right: 20px;
+      margin-left: auto;
       > label {
         cursor: pointer;
         margin-right: 4px;
@@ -252,7 +253,6 @@
         width: 280px; height: 34px;
         cursor: pointer;
         font-size: 0.8rem;
-        position: relative; top: -2px;
       }
     }
   }

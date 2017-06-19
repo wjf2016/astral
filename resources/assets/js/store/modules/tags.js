@@ -93,7 +93,7 @@ const actions = {
   syncTags ({ commit, rootState }, { repo, tags }) {
     return new Promise((resolve, reject) => {
       Tags.sync(repo, tags).then((res) => {
-        commit(SET_CURRENT_STAR, rootState.github.githubStars.find(repo => repo.id === res.message.star.repo_id))
+        // commit(SET_CURRENT_STAR, rootState.github.githubStars.find(repo => repo.id === res.message.star.repo_id))
         commit(SET_REPO_TAGS, { id: res.message.star.repo_id, tags: res.message.star.tags })
         commit(SET_TAGS, res.message.tags)
         resolve(res.message)

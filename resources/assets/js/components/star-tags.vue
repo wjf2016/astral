@@ -1,17 +1,19 @@
 <template>
 <div class="vue-tagger">
-  <span class="vue-tagger-tag" v-for="(tag, index) in visibleTags" :key="tag.id">
+  <span class="vue-tagger-tag" v-for="tag in visibleTags" :key="tag.id" @click.stop="setTag(tag)">
     <span class="vue-tagger-tag-name">{{ tag.name }}</span>
   </span>
   <div class="vue-tagger-input-container">
-    <input class="vue-tagger-input" @click.stop v-model="newTagText" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="placeholder" ref="vue-tagger-input" />
+    <input class="vue-tagger-input" @click.stop v-model="newTagText" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="mutablePlaceholder" :ref="'vue-tagger-input-' + repo.id" @blur="doSyncTags" />
   </div>
 </div>
 </template>
 <script>
+import Vue from 'vue'
+import { mapActions } from 'vuex'
 import fuzzysearch from 'fuzzysearch'
 import Awesomplete from 'awesomplete'
-import { differenceBy } from 'lodash'
+import { differenceBy, isEqual } from 'lodash'
 export default {
   name: 'StarTags',
   props: {
@@ -28,20 +30,23 @@ export default {
       type: String,
       default: 'Add a tag...'
     },
-    refId: {
-      type: Number
+    repo: {
+      type: Object
     }
   },
   data () {
     return {
       awesomplete: null,
       newTagText: '',
-      tagList: [].concat(this.tags)
+      tagList: [].concat(this.tags),
+      tagsToSync: [],
+      tagsChanged: false,
+      mutablePlaceholder: this.placeholder
     }
   },
   computed: {
     autocompleteList () {
-      return differenceBy(this.tags, this.visibleTags, 'name').map(tag => tag.name)
+      return differenceBy(this.tagList, this.visibleTags, 'name').map(tag => tag.name)
     },
     visibleTags () {
       return this.tagList.filter(tag => tag.selected)
@@ -49,20 +54,27 @@ export default {
   },
   mounted () {
     this.initAwesomplete()
+    // this.$watch('tags.selected', (newVal, oldVal) => {
+    //   console.log(oldVal, newVal)
+    // })
   },
   watch: {
-    tags () {
-      this.tagList = [].concat(this.tags)
-      this.awesomplete.list = this.autocompleteList
+    tags (newVal, oldVal) {
+      if (!isEqual(newVal, this.tagsList)) {
+        this.tagList = [].concat(this.tags)
+        this.awesomplete.list = this.autocompleteList
+      }
     },
-    tagList () {
-      this.$emit('change', JSON.parse(JSON.stringify(this.visibleTags)).map(tag => tag.name))
-      this.awesomplete.list = this.autocompleteList
+    tagList (newVal, oldVal) {
+      this.tagsChanged = !isEqual(newVal, oldVal)
     }
   },
   methods: {
+    ...mapActions([
+      'syncTags'
+    ]),
     initAwesomplete () {
-      this.awesomplete = new Awesomplete(this.$refs["vue-tagger-input"], {
+      this.awesomplete = new Awesomplete(this.$refs[`vue-tagger-input-${this.repo.id}`], {
         autoFirst: true,
         filter (text, input) {
           return fuzzysearch(input.toLowerCase(), text.toLowerCase())
@@ -70,7 +82,7 @@ export default {
         list: this.autocompleteList
       })
       window.addEventListener('awesomplete-select', (e) => {
-        if (e.target === this.$refs[`vue-tagger-input`]) {
+        if (e.target === this.$refs[`vue-tagger-input-${this.repo.id}`]) {
           setTimeout(() => {
             const tagName = e.text.value.trim()
             this.addTag(tagName)
@@ -107,18 +119,48 @@ export default {
       const tagIndex = this.getTagIndexByName(name)
       if (tagIndex !== -1) {
         this.tagList.splice(tagIndex, 1)
-        this.tagList.push({ name: name, selected: true })
+        this.tagList = this.tagList
+          .slice(0, tagIndex)
+          .concat(this.tagList.slice(tagIndex + 1))
+          .concat([{ name: name, selected: true }])
       } else {
-        this.tagList.push({ name: name, selected: true })
+        this.tagList = this.tagList.concat([{ name: name, selected: true }])
       }
     },
     removeTagAtIndex (index) {
-      this.tagList.splice(index, 1)
+      this.tagList = this.tagList
+        .slice(0, index)
+        .concat(this.tagList.slice(index + 1))
     },
     deleteTag (tag) {
       const index = this.tagList.findIndex(t => t.name === tag.name)
       this.removeTagAtIndex(index)
-      this.$refs['vue-tagger-input'].focus()
+      this.$refs[`vue-tagger-input-${this.repo.id}`].focus()
+    },
+    doSyncTags () {
+      Vue.nextTick(() => {
+        if (this.tagsChanged) {
+          this.mutablePlaceholder = 'Saving tags...'
+          const tagsToSync = this.visibleTags.map(tag => tag.name)
+          this.syncTags({ repo: this.repo, tags: tagsToSync }).then((res) => {
+            this.tagsChanged = false
+            this.mutablePlaceholder = 'Tags saved!'
+            setTimeout(() => {
+              this.mutablePlaceholder = this.placeholder
+            }, 2500)
+          }).catch((errors) => {
+            this.$bus.$emit('NOTIFICATION', 'There was an error saving these tags.', 'error')
+            this.tagsChanged = false
+          })
+        }
+      })
+    },
+    setTag (tag) {
+      if (tag.hasOwnProperty('slug')) {
+        this.$router.push(`/dashboard/tag/${tag.slug}`)
+      } else {
+        return false
+      }
     }
   }
 }
@@ -141,15 +183,18 @@ $text: #fff;
     box-shadow: inset 0 1px 2px rgba(#000, 0.1);
   }
   &-tag {
+    transition: background 250ms ease;
     background: $primary;
     border-radius: 20px;
     color: $text;
+    cursor: pointer;
     font-size: 0.7rem;
     font-weight: bold;
     padding: 3px 8px;
     letter-spacing: 0.02em;
     margin-bottom: 6px;
     margin-right: 3px;
+    &:hover { background: darken($primary, 15%); }
   }
   &-delete-tag {
     display: none;

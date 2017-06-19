@@ -32,7 +32,13 @@
       <p>You haven't added any tags yet!</p>
     </div> -->
     <transition-group name="sidebar-tag" tag="ul" class="dashboard-list sidebar-tags">
-      <li class="dashboard-list-item tag" v-for="tag in tags" :key="tag.id" :data-id="tag.id" @click="setTag(tag)" :class="{ 'selected': currentTag.id == tag.id }" ref="tag">
+      <li class="dashboard-list-item tag" 
+        v-for="tag in tags" 
+        :key="tag.id"
+        :data-id="tag.id"
+        :class="{ 'selected': currentTag.id == tag.id }"
+        @click="setTag(tag)"
+        ref="tag">
         <i class="fa fa-tag"></i>
         <span class="tag-name">{{ tag.name }}</span>
         <span class="tagged-count" v-if="tag.stars_count > 0">{{ tag.stars_count }}</span>
@@ -72,10 +78,12 @@ export default {
     ])
   },
   watch: {
-    tags () {
-      setTimeout(() => {
-        this.bindTagItemDragListeners()
-      }, 1)
+    tags (newVal, oldVal) {
+      if (newVal.length !== oldVal.length) {
+        setTimeout(() => {
+          this.bindTagItemDragListeners()
+        }, 1)
+      }
     }
   },
   created () {
