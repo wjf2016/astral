@@ -237,3 +237,248 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@import "../../sass/application/shared/variables";
+@import "../../sass/application/shared/modules/btn";
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.dashboard-sidebar {
+  background: $dark-blue;
+  overflow-y: auto; overflow-x: hidden;
+  position: absolute; top: 60px; bottom: 0; left: 0;
+  width: $dashboard-sidebar-width;
+  .dashboard-sidebar-header {
+    width: $dashboard-sidebar-width; height: 60px;
+    padding: 0 20px;
+    background: $primary;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+    position: fixed; top: 0; left: 0;
+    img {
+      width: 65%;
+    }
+    h3 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      position: relative; top: 18px;
+    }
+  }
+  .sidebar-header {
+    color: rgba(#fff, 0.3);
+    display: flex; align-items: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    height: 42px;
+    overflow: hidden;
+    padding: 0 0 0 20px;
+    position: relative;
+    text-transform: uppercase;
+    .sidebar-header-control {
+      margin-left: auto; margin-right: 12px;
+      .refresh-stars {
+        transition: background 250ms ease;
+        appearance: none;
+        background: rgba(#fff, 0.1);
+        border-radius: 50%;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.6rem;
+        font-weight: bold;
+        line-height: 0.6rem;
+        outline: none;
+        padding: 0.45rem;
+        &:hover { background: rgba(#fff, 0.2); }
+        &.active {
+          animation: spin 750ms linear 0s infinite;
+          opacity: 0.75;
+          pointer-events: none;
+        }
+      }
+    }
+    &.tags-header {
+      overflow: visible;
+      .tag-button-group {
+        float: right;
+        font-size: 0;
+        height: 100%;
+        position: relative;
+        .sidebar-sortDropdown {
+          display: inline-block;
+          height: 100%;
+        }
+        .tag-button-group-item {
+          transition: background 200ms linear, color 200ms linear;
+          appearance: none;
+          background: transparent;
+          border: none;
+          border-left: 1px solid rgba(#fff, 0.08);
+          color: rgba(#fff, 0.65);
+          display: inline-block;
+          font-size: 0.8rem;
+          height: 100%;
+          outline: none;
+          padding: 0 15px;
+          i.fa {
+            margin-right: 2px;
+            pointer-events: none;
+          }
+          &:hover {
+            background: rgba(#fff, 0.03);
+            color: rgba(#fff, 0.85);
+          }
+        }
+      }
+    }
+    .sidebar-header-text {
+      display: inline-block;
+      flex-grow: 1;
+      margin: 0;
+    }
+  }
+  .tag-form {
+    background: $dark-blue;
+    font-size: 0;
+    input[type=text] {
+      appearance: none;
+      background: rgba(#fff, 0.1);
+      background-clip: padding-box;
+      border-radius: 0;
+      border: none;
+      display: inline-block;
+      outline: none;
+      float: left;
+      font-size: 0.75rem;
+      height: 40px;
+      padding: 0 12px;
+      position: relative; top: 0; left: 0;
+      width: 80%;
+      &:focus {
+        background: #fff;
+        color: $dark-blue;
+      }
+    }
+    button[type=submit] {
+      @include btn_flat( $primary );
+      border-radius: 0;
+      font-size: 0.75rem;
+      height: 41px;
+      margin-bottom: -2px;
+      position: relative; top: 0; right: 0;
+      width: 20%;
+    }
+  }
+  .dashboard-list {
+    clear: both;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    .dashboard-list-item {
+      transition: transform 200ms linear;
+      border-bottom: 1px solid rgba(#fff, 0.08);
+      color: rgba(#fff, 0.65);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+      height: 42px;
+      padding: 0 20px;
+      &:first-child, &:only-child { border-top: 1px solid rgba(#fff, 0.08); }
+      i.fa { margin-right: 5px; pointer-events: none; }
+      &.selected {
+        background: rgba(#fff, 0.05);
+        color: #fff;
+      }
+      &:hover {
+        background: rgba(#fff, 0.03);
+        color: rgba(#fff, 0.85);
+      }
+      &.selected {
+        background: rgba(#fff, 0.05);
+        color: #fff;
+      }
+    }
+    &.sidebar-tags {
+      position: relative;
+      .no-tags {
+        border-top: 1px solid rgba(#fff, 0.08);
+        color: rgba(#fff, 0.85);
+        display: flex; justify-content: center; align-items: center;
+        flex-direction: column;
+        padding: 20px;
+        position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+        text-align: center;
+        .fa {
+          font-size: 10rem;
+        }
+      }
+    }
+    &.sidebar-tags .tag {
+      transition: all 250ms ease;
+      &.sidebar-tag-move {
+        transition: transform .5s cubic-bezier(.55,0,.1,1);
+      }
+      &.sidebar-tag-enter, &.sidebar-tag-leave-to {
+        transform: translate3d(-100%, 0, 0);
+        opacity: 0;
+      }
+      &.sidebar-tag-leave-active {
+        position: absolute;
+      }
+      &.dragging {
+        background: $primary;
+        color: #fff;
+      }
+      &.gu-mirror, &.gu-transit { transition: none!important; }
+      .tag-name {
+        flex-grow: 1;
+        pointer-events: none;
+      }
+      .tagged-count {
+        background: rgba(#fff, 0.1);
+        border-radius: 100px;
+        color: #fff;
+        display: inline-block;
+        font-size: 0.6rem;
+        font-weight: bold;
+        line-height: 0.6rem;
+        padding: 0.3rem 0.7rem;
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+//Dragula clone-url
+.dashboard-list-item.gu-mirror {
+  border: 1px solid rgba(#fff, 0.08);
+  color: rgba(#fff, 0.65);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  height: 42px;
+  padding: 0 20px;
+  i.fa { margin-right: 5px; pointer-events: none; }
+  .tag-name {
+    flex-grow: 1;
+  }
+  .tagged-count {
+    background: rgba(#fff, 0.1);
+    border-radius: 100px;
+    color: #fff;
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: bold;
+    line-height: 0.6rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
+
+</style>

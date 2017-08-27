@@ -1,0 +1,63 @@
+// Converted Variables
+
+
+// Custom Media Query Variables
+
+
+/*
+
+   FORMS
+
+*/
+
+.input-reset {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.button-reset::-moz-focus-inner,
+.input-reset::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.nb-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border 150ms ease;
+  background: $white;
+  border: 1px solid $light-gray;
+  border-radius: 0.25rem;
+  box-shadow: inset 0 1px 2px $black-10;
+  font-size: .8125rem;
+  padding: 0.5rem 0.625rem;
+  &:focus {
+    border: 1px solid rgba($gray, 0.8);
+    box-shadow: inset 0 1px 2px $black-10, 0 0 0 2px $black-05;
+    outline: none;
+  }
+  &::-webkit-input-placeholder {
+    color: rgba($gray, 0.8);
+  }
+  &::-moz-placeholder {
+    color: rgba($gray, 0.8);
+  }
+  &:-ms-input-placeholder {
+    color: rgba($gray, 0.8);
+  }
+  &:-moz-placeholder {
+    color: rgba($gray, 0.8);
+  }
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+  &--read-only, &[readonly] {
+    background: $lightest-silver;
+  }
+  &--disabled, &[disabled] {
+    background: $light-silver;
+    color: $gray;
+    pointer-events: none;
+  }
+}

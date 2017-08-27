@@ -1,7 +1,7 @@
 <template>
-  <div class="dashboard">
-    <settings-panel :class="{'active': settingsPanelShowing}"></settings-panel>
-    <patreon-notice :class="{'active': patreonNoticeShowing}"></patreon-notice>
+  <div class="dashboard bg-near-white absolute absolute--fill">
+    <!-- <settings-panel :class="{'active': settingsPanelShowing}"></settings-panel>
+    <patreon-notice :class="{'active': patreonNoticeShowing}"></patreon-notice> -->
     <dashboard-header></dashboard-header>
     <div class="dashboard-main">
       <dashboard-sidebar></dashboard-sidebar>
@@ -105,3 +105,13 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+$easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+.router-transition {
+ transition: opacity 500ms $easeOutCubic;
+ opacity: 1;
+}
+.router-enter, .router-leave {
+ opacity: 0;
+}
+</style>

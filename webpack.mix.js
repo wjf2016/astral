@@ -11,9 +11,15 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js/')
-.sass('resources/assets/sass/app.scss', 'public/css/');
+const isProdBuild = process.env.NODE_ENV === 'production'
 
-if (process.env.NODE_ENV === 'production') {
+mix.js('resources/assets/js/app.js', 'public/js/')
+.sass('resources/assets/sass/app.scss', 'public/css/')
+.sourceMaps()
+.options({
+  extractVueStyles: isProdBuild
+});
+
+if (isProdBuild) {
   mix.version();
 }

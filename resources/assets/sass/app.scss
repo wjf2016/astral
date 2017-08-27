@@ -1,32 +1,31 @@
-@import "application/shared/normalize";
-@import "application/shared/variables";
-@import "application/shared/modules/btn";
-@import "application/shared/modules/input";
-@import "application/shared/modules/dropdown";
-@import "application/shared/modules/toggle_switch";
-@import "application/shared/modules/modal";
-@import "application/shared/modules/flash_message";
-@import "application/shared/modules/tags_input";
-@import "application/dashboard/dashboard_global";
-@import "application/components/auth";
-@import "application/components/dashboard";
-@import "application/components/edit_tag_dropdown";
-@import "application/components/tag_editor";
+// @import "application/shared/normalize";
+// @import "application/shared/variables";
+// @import "application/shared/modules/btn";
+// @import "application/shared/modules/input";
+// @import "application/shared/modules/dropdown";
+// @import "application/shared/modules/toggle_switch";
+// @import "application/shared/modules/modal";
+// @import "application/shared/modules/tags_input";
+// @import "application/dashboard/dashboard_global";
+// @import "application/components/auth";
+// @import "application/components/dashboard";
+// @import "application/components/edit_tag_dropdown";
+// @import "application/components/tag_editor";
+@import "nebula/nebula";
 @import "~sweetalert/dev/sweetalert";
 @import "~sweetalert/themes/facebook/facebook";
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
-html, body {
-  overflow-x: hidden;
-}
-body {
-  font-family: $sans;
-  font-size: 16px;
-  min-height: 100%;
+
+html,body {
+  height: 100vh;
 }
 
+body {
+  font-family: 'Karla', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;

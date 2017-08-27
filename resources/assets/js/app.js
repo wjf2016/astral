@@ -4,6 +4,7 @@ import VueResource from 'vue-resource'
 import App from './components/app.vue'
 import Auth from './components/auth.vue'
 import Dashboard from './components/dashboard.vue'
+import Styleguide from './components/styleguide.vue'
 import store from './store'
 
 Vue.use(VueResource)
@@ -12,6 +13,7 @@ Vue.use(VueRouter)
 const router = new VueRouter({
   mode: 'history',
   routes: [
+    { path: '/styleguide', component: Styleguide },
     { path: '/auth', component: Auth },
     { path: '/dashboard', component: Dashboard },
     { path: '/dashboard/untagged', component: Dashboard },

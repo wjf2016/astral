@@ -1,22 +1,22 @@
 <template>
-  <div class="dashboard-dashboardHeader">
-    <h2>
+  <div class="dashboard-dashboardHeader bg-white flex items-center absolute top-0 right-0 h4">
+    <h2 class="dib ml3 navy">
       <span>{{ currentTagName }}</span>
     </h2>
     <edit-tag-dropdown v-if="currentTagExists()"></edit-tag-dropdown>
-    <div class="dashboard-searchBar">
-      <label for="galileo">
-        <input type="text" id="galileo" class="dashboard-telescope" placeholder="Gaze through your telescope" v-model="currentSearchQuery">
-        <i class="fa fa-search"></i>
+    <div class="dashboard-searchBar dib ml3">
+      <label for="galileo" class="db relative w-100">
+        <input type="text" id="galileo" class="dashboard-telescope nb-input pv2 pr2 w-100" placeholder="Gaze through your telescope" v-model="currentSearchQuery">
+        <i class="fa fa-search absolute left-1 pe-n steel-gray"></i>
       </label>
     </div>
-    <div class="dashboard-status" v-show="status != ''"><div class="status-spinner"></div> {{ status }}</div>
-    <div class="dashboard-userDropdown" @click.stop="userDropdownVisible = !userDropdownVisible">
+    <div class="dashboard-status ml3 steel-blue flex" v-show="status != ''"><div class="status-spinner w1 h1 o-50 br-100"></div> <span>{{ status }}</span></div>
+    <!-- <div class="dashboard-userDropdown" @click.stop="userDropdownVisible = !userDropdownVisible">
       <img :src="user.avatar_url" :alt="user.name" class="dashboard-userDropdownAvatar"/>
       <span class="dashboard-userDropdownName">{{ user.username }}</span>
       <i class="fa fa-chevron-down"></i>
       <user-dropdown :visible="userDropdownVisible" v-on-clickaway="hideUserDropdown"></user-dropdown>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -79,3 +79,41 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+@import "../../sass/nebula/scss/colors";
+
+.dashboard-dashboardHeader {
+  left: 280px;
+}
+.dashboard-searchBar {
+  width: 300px;
+  .fa-search {
+    transition: color 150ms ease;
+    color: $light-gray;
+    top: 0.55rem;
+  }
+  .dashboard-telescope {
+    border-radius: 9999px;
+    padding-left: 2.3rem;
+    &:focus + .fa-search { color: $gray; }
+  }
+}
+.dashboard-status {
+  .status-spinner {
+    animation: spin 1.2s backwards infinite linear;
+    border: 2px solid;
+    border-top-color: $dark-gray;
+    color: rgba($dark-gray, 0.5);
+    margin-right: 5px;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
