@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-sidebar">
-    <div class="dashboard-sidebar-header">
+    <div class="dashboard-sidebar-header fixed top-0 left-0 h4 flex justify-start items-center">
       <img src="/images/logo.svg" alt="Astral">
     </div>
     <div class="sidebar-header">
@@ -251,14 +251,9 @@ export default {
   position: absolute; top: 60px; bottom: 0; left: 0;
   width: $dashboard-sidebar-width;
   .dashboard-sidebar-header {
-    width: $dashboard-sidebar-width; height: 60px;
+    width: $dashboard-sidebar-width;
     padding: 0 20px;
     background: $primary;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: left;
-    position: fixed; top: 0; left: 0;
     img {
       width: 65%;
     }
