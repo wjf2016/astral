@@ -1,21 +1,18 @@
 <template>
-  <div class="dashboard-star-container">
+  <div class="dashboard-star-container absolute bottom-0 overflow-y-auto br b--light-gray">
     <div class="dashboard-repos">
-      <ul class="repos">
-        <li class="repo" v-for="(repo, index) in starsList" :key="repo.id" draggable="true" @click="starClicked(repo)" :class="{ 'active': currentStar.id == repo.id }" ref="repo" :data-index="index">
-          <h3 class="repo-name" v-once>{{ repo.full_name }}</h3>
-          <div class="repo-description" v-once="">{{ repo.description }}</div>
-            <transition-group name="star-tag" tag="ul" class="repo-tags">
-              <li v-for="tag in repo.tags" :key="tag.slug" @click.stop="setTag(tag)">
-                {{ tag.name }}
-              </li>
-            </transition-group>
-          <div class="repo-stats">
-            <div class="repo-stat stars"><i class="fa fa-star"></i> <span v-once>{{ repo.stargazers_count }}</span></div>
-            <div class="repo-stat forks"><i class="fa fa-code-fork"></i> <span v-once>{{ repo.forks_count }}</span></div>
-            <div class="repo-stat link"><a :href="repo.html_url" target="_blank" rel="noopener" @click.stop>View on GitHub</a></div>
-          </div>
-        </li>
+      <ul class="repos list ma0 pa0">
+        <star
+          v-for="(repo, index) in starsList"
+          :key="repo.id"
+          :repo="repo"
+          :class="{ 'active': currentStar.id == repo.id }"
+          :data-index="index"
+          @click.native="starClicked(repo)"
+          draggable="true"
+          ref="repo"
+        >
+        </star>
       </ul>
     </div>
     <div>
@@ -25,12 +22,14 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Star from './star.vue'
 import StarInfo from './star-info.vue'
 import galileo from './../filters/galileo.js'
 
 export default {
   name: 'StarList',
   components: {
+    'star': Star,
     'star-info': StarInfo
   },
   computed: {
@@ -83,9 +82,6 @@ export default {
       this.setCurrentStar(repo)
       this.$bus.$emit('STAR_CHANGED')
     },
-    setTag (tag) {
-      this.$router.push(`/dashboard/tag/${tag.slug}`)
-    },
     starHasCurrentTag (repo) {
       if (!Object.keys(this.currentTag).length) {
         if (this.tagFilter === 'UNTAGGED') {
@@ -103,3 +99,10 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.dashboard-star-container {
+  top: 150px;
+  left: 280px;
+  width: 400px;
+}
+</style>

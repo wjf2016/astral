@@ -1,4 +1,3 @@
-
 // Converted Variables
 
 
@@ -15,6 +14,8 @@
      -l  = large
 
 */
+
+$sidebar-width: 280px;
 
 /* Equivalent to .overflow-y-scroll */
 .overflow-container {
@@ -33,6 +34,8 @@
 .pe-auto {
   pointer-events: auto;
 }
+
+.cur-p { cursor: pointer; }
 
 .nudge-down--1 {
   top: 1px;

@@ -1,43 +1,52 @@
 <template>
-  <div class="dashboard-sidebar">
-    <div class="dashboard-sidebar-header fixed top-0 left-0 h4 flex justify-start items-center">
+  <div class="dashboard-sidebar bg-near-black overflow-y-auto overflow-x-hidden absolute top-0 bottom-0 left-0">
+    <div class="dashboard-brand flex justify-start items-center ph5 mb5 bg-green">
       <img src="/images/logo.svg" alt="Astral">
     </div>
-    <div class="sidebar-header">
-      <h3 class="sidebar-header-text">Stars</h3>
-      <div class="sidebar-header-control">
-        <button class="refresh-stars" :class="{ 'active': refreshingStars }" @click="refreshStars"><i class="fa fa-refresh"></i></button>
-      </div>
-    </div>
-    <ul class="dashboard-list sidebar-stars">
-      <li class="all-stars dashboard-list-item" @click="resetTag" :class="{ 'selected': tagFilter == 'ALL' }"><i class="fa fa-inbox"></i> All Stars</li>
-      <li class="untagged-stars dashboard-list-item" @click="showUntagged" :class="{ 'selected': tagFilter == 'UNTAGGED' }"><i class="fa fa-star-o"></i> Untagged Stars</li>
-    </ul>
-    <div class="sidebar-header tags-header">
-      <h3 class="sidebar-header-text">Tags</h3>
-      <div class="tag-button-group">
-        <button class="tag-button-group-item" @click="addTagFormShowing = !addTagFormShowing"><i class="fa fa-plus-circle"></i> Add</button>
+    <div class="sidebar-items ph5">
+      <sidebar-header title="Stars">
+        <button class="refresh-stars bg-transparent pa0" :class="{ 'active': refreshingStars }" @click="refreshStars"><i class="material-icons mid-gray">cached</i></button>
+      </sidebar-header>
+      <ul class="dashboard-list sidebar-stars list ma0 ph0 pt0 pb3 bb b--dark-gray">
+        <sidebar-item
+          class="all-stars"
+          :class="{ 'selected': tagFilter == 'ALL' }"
+          @click.native="resetTag"
+          title="All Stars"
+          icon="inbox"
+          icon-size="3"
+        ></sidebar-item>
+        <sidebar-item
+          class="untagged-stars"
+          :class="{ 'selected': tagFilter == 'UNTAGGED' }"
+          @click.native="showUntagged"
+          title="Untagged Stars"
+          icon="stars"
+          icon-size="3"
+        ></sidebar-item>
+      </ul>
+      <sidebar-header title="Tags">
         <div class="sidebar-sortDropdown">
-          <button class="tag-button-group-item" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible"><i class="fa fa-sort"></i> Sort</button>
+          <button class="bn bg-transparent mid-gray f6 ttu flex items-center outline-0 cur-p" :class="{'active': sortTagsDropdownVisible}" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible"><i class="material-icons f4">swap_vert</i> Sort</button>
           <sort-tags-dropdown :visible="sortTagsDropdownVisible" v-on-clickaway="hideSortTagsDropdown"></sort-tags-dropdown>
         </div>
-      </div>
+      </sidebar-header>
+      <new-tag-form @submit="doAddTag"></new-tag-form>
+      <transition-group name="sidebar-tags" tag="ul" class="dashboard-list sidebar-tags list ma0 pa0 pb3 bb b--dark-gray">
+        <sidebar-item
+          v-for="tag in tags" :key="tag.id"
+          :data-id="tag.id"
+          class="tag"
+          :class="{ 'selected': currentTag.id == tag.id }"
+          ref="tag"
+          @click.native="setTag(tag)"
+          :title="tag.name"
+          icon="local_offer"
+          icon-size="4"
+          :badge="tag.stars_count"
+        ></sidebar-item>
+      </transition-group>
     </div>
-    <form class="tag-form" v-show="addTagFormShowing" @submit.prevent="doAddTag()">
-      <input type="text" name="name" v-model="newTag.name" placeholder="Tag name">
-      <button type="submit">Save</button>
-    </form>
-    <!-- <div class="no-tags" v-show="tags.length == 0">
-      <i class="fa fa-tag"></i>
-      <p>You haven't added any tags yet!</p>
-    </div> -->
-    <transition-group name="sidebar-tag" tag="ul" class="dashboard-list sidebar-tags">
-      <li class="dashboard-list-item tag" v-for="tag in tags" :key="tag.id" :data-id="tag.id" @click="setTag(tag)" :class="{ 'selected': currentTag.id == tag.id }" ref="tag">
-        <i class="fa fa-tag"></i>
-        <span class="tag-name">{{ tag.name }}</span>
-        <span class="tagged-count" v-if="tag.stars_count > 0">{{ tag.stars_count }}</span>
-      </li>
-    </transition-group>
   </div>
 </template>
 <script>
@@ -46,11 +55,17 @@ import { orderBy } from 'lodash'
 import { mixin as clickaway } from 'vue-clickaway'
 import $ from 'jquery'
 import dragula from 'dragula'
+import SidebarHeader from './sidebar/sidebar-header.vue'
+import SidebarItem from './sidebar/sidebar-item.vue'
+import NewTagForm from './sidebar/new-tag-form.vue'
 import SortTagsDropdown from './sort-tags-dropdown.vue'
 
 export default {
   name: 'DashboardSidebar',
   components: {
+    'sidebar-header': SidebarHeader,
+    'sidebar-item': SidebarItem,
+    'new-tag-form': NewTagForm,
     'sort-tags-dropdown': SortTagsDropdown
   },
   mixins: [clickaway],
@@ -147,6 +162,9 @@ export default {
       'setCurrentTag',
       'cleanupStars'
     ]),
+    testo (v) {
+      console.log(v)
+    },
     bindTagItemDragListeners () {
       $('.dashboard-list-item.tag').off('dragover dragleave drop')
       $('.dashboard-list-item.tag').on('dragover', function (e) {
@@ -168,9 +186,15 @@ export default {
         this.tagStarWithData(dropData, tagId)
       })
     },
-    doAddTag: function () {
-      const newTagName = this.newTag.name
-      this.addTag().then(() => {
+    showNewTagForm () {
+      this.addTagFormShowing = true
+      setTimeout(() => {
+        this.$refs.newTagForm.focus()
+      }, 0)
+    },
+    doAddTag (name) {
+      const newTagName = name
+      this.addTag(newTagName).then(() => {
         this.$bus.$emit('NOTIFICATION', `${newTagName} was created successfully.`)
       }).catch((errors) => {
         if (errors.name) {
@@ -239,241 +263,61 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../sass/application/shared/variables";
-@import "../../sass/application/shared/modules/btn";
+@import "../../sass/nebula/scss/colors";
+
+$sidebar-width: 280px;
+
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 .dashboard-sidebar {
-  background: $dark-blue;
-  overflow-y: auto; overflow-x: hidden;
-  position: absolute; top: 60px; bottom: 0; left: 0;
-  width: $dashboard-sidebar-width;
-  .dashboard-sidebar-header {
-    width: $dashboard-sidebar-width;
-    padding: 0 20px;
-    background: $primary;
+  width: $sidebar-width;
+  .dashboard-brand {
+    width: $sidebar-width;
+    height: 80px;
     img {
-      width: 65%;
-    }
-    h3 {
-      color: #fff;
-      font-weight: 600;
-      margin: 0;
-      position: relative; top: 18px;
+      width: 168px;
     }
   }
-  .sidebar-header {
-    color: rgba(#fff, 0.3);
-    display: flex; align-items: center;
-    font-size: 0.7rem;
-    font-weight: bold;
-    height: 42px;
-    overflow: hidden;
-    padding: 0 0 0 20px;
-    position: relative;
-    text-transform: uppercase;
-    .sidebar-header-control {
-      margin-left: auto; margin-right: 12px;
-      .refresh-stars {
-        transition: background 250ms ease;
-        appearance: none;
-        background: rgba(#fff, 0.1);
-        border-radius: 50%;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        font-size: 0.6rem;
-        font-weight: bold;
-        line-height: 0.6rem;
-        outline: none;
-        padding: 0.45rem;
-        &:hover { background: rgba(#fff, 0.2); }
-        &.active {
-          animation: spin 750ms linear 0s infinite;
-          opacity: 0.75;
-          pointer-events: none;
-        }
-      }
+  .refresh-stars {
+    appearance: none;
+    background: rgba(#fff, 0);
+    border: none;
+    cursor: pointer;
+    outline: none;
+    width: 24px; height: 24px;
+    .material-icons {
+      transition: color 250ms ease;
     }
-    &.tags-header {
-      overflow: visible;
-      .tag-button-group {
-        float: right;
-        font-size: 0;
-        height: 100%;
-        position: relative;
-        .sidebar-sortDropdown {
-          display: inline-block;
-          height: 100%;
-        }
-        .tag-button-group-item {
-          transition: background 200ms linear, color 200ms linear;
-          appearance: none;
-          background: transparent;
-          border: none;
-          border-left: 1px solid rgba(#fff, 0.08);
-          color: rgba(#fff, 0.65);
-          display: inline-block;
-          font-size: 0.8rem;
-          height: 100%;
-          outline: none;
-          padding: 0 15px;
-          i.fa {
-            margin-right: 2px;
-            pointer-events: none;
-          }
-          &:hover {
-            background: rgba(#fff, 0.03);
-            color: rgba(#fff, 0.85);
-          }
-        }
-      }
+    &:hover {
+      .material-icons { color: $silver; }
     }
-    .sidebar-header-text {
-      display: inline-block;
-      flex-grow: 1;
-      margin: 0;
+    &.active {
+      animation: spin 750ms linear 0s infinite;
+      opacity: 0.75;
+      pointer-events: none;
     }
   }
-  .tag-form {
-    background: $dark-blue;
-    font-size: 0;
-    input[type=text] {
-      appearance: none;
-      background: rgba(#fff, 0.1);
-      background-clip: padding-box;
-      border-radius: 0;
-      border: none;
-      display: inline-block;
-      outline: none;
-      float: left;
-      font-size: 0.75rem;
-      height: 40px;
-      padding: 0 12px;
-      position: relative; top: 0; left: 0;
-      width: 80%;
-      &:focus {
-        background: #fff;
-        color: $dark-blue;
-      }
+  .sidebar-tags {
+    &-enter, &-leave-to {
+      transform: translate3d(-100%, 0, 0);
+      opacity: 0;
     }
-    button[type=submit] {
-      @include btn_flat( $primary );
-      border-radius: 0;
-      font-size: 0.75rem;
-      height: 41px;
-      margin-bottom: -2px;
-      position: relative; top: 0; right: 0;
-      width: 20%;
+    &-leave-active {
+      position: absolute;
     }
   }
-  .dashboard-list {
-    clear: both;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    .dashboard-list-item {
-      transition: transform 200ms linear;
-      border-bottom: 1px solid rgba(#fff, 0.08);
-      color: rgba(#fff, 0.65);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      font-size: 0.8rem;
-      height: 42px;
-      padding: 0 20px;
-      &:first-child, &:only-child { border-top: 1px solid rgba(#fff, 0.08); }
-      i.fa { margin-right: 5px; pointer-events: none; }
-      &.selected {
-        background: rgba(#fff, 0.05);
-        color: #fff;
-      }
-      &:hover {
-        background: rgba(#fff, 0.03);
-        color: rgba(#fff, 0.85);
-      }
-      &.selected {
-        background: rgba(#fff, 0.05);
-        color: #fff;
-      }
-    }
-    &.sidebar-tags {
-      position: relative;
-      .no-tags {
-        border-top: 1px solid rgba(#fff, 0.08);
-        color: rgba(#fff, 0.85);
-        display: flex; justify-content: center; align-items: center;
-        flex-direction: column;
-        padding: 20px;
-        position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-        text-align: center;
-        .fa {
-          font-size: 10rem;
-        }
-      }
-    }
-    &.sidebar-tags .tag {
-      transition: all 250ms ease;
-      &.sidebar-tag-move {
-        transition: transform .5s cubic-bezier(.55,0,.1,1);
-      }
-      &.sidebar-tag-enter, &.sidebar-tag-leave-to {
-        transform: translate3d(-100%, 0, 0);
-        opacity: 0;
-      }
-      &.sidebar-tag-leave-active {
-        position: absolute;
-      }
-      &.dragging {
-        background: $primary;
-        color: #fff;
-      }
-      &.gu-mirror, &.gu-transit { transition: none!important; }
-      .tag-name {
-        flex-grow: 1;
-        pointer-events: none;
-      }
-      .tagged-count {
-        background: rgba(#fff, 0.1);
-        border-radius: 100px;
-        color: #fff;
-        display: inline-block;
-        font-size: 0.6rem;
-        font-weight: bold;
-        line-height: 0.6rem;
-        padding: 0.3rem 0.7rem;
-        pointer-events: none;
-      }
+  .sidebar-sortDropdown button {
+    transition: color 250ms ease;
+    &:hover, &.active {
+      color: $silver;
     }
   }
 }
 
 //Dragula clone-url
 .dashboard-list-item.gu-mirror {
-  border: 1px solid rgba(#fff, 0.08);
-  color: rgba(#fff, 0.65);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  font-size: 0.8rem;
-  height: 42px;
-  padding: 0 20px;
-  i.fa { margin-right: 5px; pointer-events: none; }
-  .tag-name {
-    flex-grow: 1;
-  }
-  .tagged-count {
-    background: rgba(#fff, 0.1);
-    border-radius: 100px;
-    color: #fff;
-    display: inline-block;
-    font-size: 0.6rem;
-    font-weight: bold;
-    line-height: 0.6rem;
-    padding: 0.3rem 0.7rem;
-  }
 }
 
 </style>

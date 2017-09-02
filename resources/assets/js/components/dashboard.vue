@@ -2,9 +2,10 @@
   <div class="dashboard bg-near-white absolute absolute--fill">
     <!-- <settings-panel :class="{'active': settingsPanelShowing}"></settings-panel>
     <patreon-notice :class="{'active': patreonNoticeShowing}"></patreon-notice> -->
-    <dashboard-header></dashboard-header>
     <div class="dashboard-main">
+      <dashboard-header></dashboard-header>
       <dashboard-sidebar></dashboard-sidebar>
+      <search-box></search-box>
       <star-list></star-list>
     </div>
     <div><notifier timeout="3000"></notifier></div>
@@ -17,7 +18,8 @@ import store from './../store'
 import SettingsPanel from './settings-panel.vue'
 import DashboardHeader from './dashboard-header.vue'
 import DashboardSidebar from './dashboard-sidebar.vue'
-import StarList from './dashboard-star-list.vue'
+import SearchBox from './search-box.vue'
+import StarList from './star-list.vue'
 import Notifier from './notifier.vue'
 import PatreonNotice from './notices/patreon-notice.vue'
 
@@ -28,6 +30,7 @@ export default {
     'patreon-notice': PatreonNotice,
     'dashboard-header': DashboardHeader,
     'dashboard-sidebar': DashboardSidebar,
+    'search-box': SearchBox,
     'star-list': StarList,
     'notifier': Notifier
   },
@@ -113,5 +116,9 @@ $easeOutCubic: cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .router-enter, .router-leave {
  opacity: 0;
+}
+.dashboard-main {
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

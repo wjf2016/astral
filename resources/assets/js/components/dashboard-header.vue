@@ -1,15 +1,9 @@
 <template>
-  <div class="dashboard-dashboardHeader bg-white flex items-center absolute top-0 right-0 h4">
-    <h2 class="dib ml3 navy">
+  <div class="dashboard-dashboardHeader bg-white flex items-center absolute top-0 right-0 bb b--light-gray">
+    <h2 class="dib ml4 near-black">
       <span>{{ currentTagName }}</span>
     </h2>
     <edit-tag-dropdown v-if="currentTagExists()"></edit-tag-dropdown>
-    <div class="dashboard-searchBar dib ml3">
-      <label for="galileo" class="db relative w-100">
-        <input type="text" id="galileo" class="dashboard-telescope nb-input pv2 pr2 w-100" placeholder="Gaze through your telescope" v-model="currentSearchQuery">
-        <i class="fa fa-search absolute left-1 pe-n steel-gray"></i>
-      </label>
-    </div>
     <div class="dashboard-status ml3 steel-blue flex" v-show="status != ''"><div class="status-spinner w1 h1 o-50 br-100"></div> <span>{{ status }}</span></div>
     <!-- <div class="dashboard-userDropdown" @click.stop="userDropdownVisible = !userDropdownVisible">
       <img :src="user.avatar_url" :alt="user.name" class="dashboard-userDropdownAvatar"/>
@@ -84,19 +78,7 @@ export default {
 
 .dashboard-dashboardHeader {
   left: 280px;
-}
-.dashboard-searchBar {
-  width: 300px;
-  .fa-search {
-    transition: color 150ms ease;
-    color: $light-gray;
-    top: 0.55rem;
-  }
-  .dashboard-telescope {
-    border-radius: 9999px;
-    padding-left: 2.3rem;
-    &:focus + .fa-search { color: $gray; }
-  }
+  height: 80px;
 }
 .dashboard-status {
   .status-spinner {

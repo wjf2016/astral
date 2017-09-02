@@ -48,12 +48,12 @@
 /* Type Scale */
 
 .f1 { font-size: 2rem; }
-.f2 { font-size: 1.75rem; }
-.f3 { font-size: 1.5rem; }
-.f4 { font-size: 1.125rem; }
-.f5 { font-size: 1rem; }
-.f6 { font-size: .8125rem; }
-.f7 { font-size: .6875rem; } /* Small and hard to read for many people so use with extreme caution */
+.f2 { font-size: 1.5rem; }
+.f3 { font-size: 1.25rem; }
+.f4 { font-size: 1rem; }
+.f5 { font-size: .875rem; }
+.f6 { font-size: .75rem; }
+.f7 { font-size: .625rem; } /* Small and hard to read for many people so use with extreme caution */
 
 @media #{$breakpoint-not-small}{
   .f-6-ns,
