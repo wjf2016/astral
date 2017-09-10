@@ -7,6 +7,7 @@
       <dashboard-sidebar></dashboard-sidebar>
       <search-box></search-box>
       <star-list></star-list>
+      <star-info></star-info>
     </div>
     <div><notifier timeout="3000"></notifier></div>
   </div>
@@ -18,6 +19,7 @@ import store from './../store'
 import SettingsPanel from './settings-panel.vue'
 import DashboardHeader from './dashboard-header.vue'
 import DashboardSidebar from './dashboard-sidebar.vue'
+import StarInfo from './star-info.vue'
 import SearchBox from './search-box.vue'
 import StarList from './star-list.vue'
 import Notifier from './notifier.vue'
@@ -32,6 +34,7 @@ export default {
     'dashboard-sidebar': DashboardSidebar,
     'search-box': SearchBox,
     'star-list': StarList,
+    'star-info': StarInfo,
     'notifier': Notifier
   },
   data () {

@@ -3,7 +3,7 @@
     <div class="noticePanel-panel">
       <div class="noticePanel-panelContent">
         <div class="left">
-          <img src="../../../images/patreon-bg.svg" alt="">
+          <img src="images/patreon-bg.svg" alt="">
         </div>
         <div class="right">
           <h3>Support Astral on Patreon!</h3>

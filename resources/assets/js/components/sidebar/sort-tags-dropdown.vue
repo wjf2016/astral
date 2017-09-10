@@ -22,7 +22,7 @@ export default {
 }
 </script>
 <style lang="scss">
-@import "../../sass/nebula/scss/colors";
+@import "../../../sass/nebula/scss/colors";
 .dashboard-sortTagsDropdownMenu {
   transform: translate3d(0, 5px, 0);
   background-clip: padding-box;

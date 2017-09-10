@@ -3,46 +3,46 @@
     <div class="dashboard-brand flex justify-start items-center ph5 mb5 bg-green">
       <img src="/images/logo.svg" alt="Astral">
     </div>
-    <div class="sidebar-items ph5">
+    <div class="sidebar-items">
       <sidebar-header title="Stars">
-        <button class="refresh-stars bg-transparent pa0" :class="{ 'active': refreshingStars }" @click="refreshStars"><i class="material-icons mid-gray">cached</i></button>
+        <refresh-button :active="refreshingStars" @click.native="refreshStars"></refresh-button>
       </sidebar-header>
-      <ul class="dashboard-list sidebar-stars list ma0 ph0 pt0 pb3 bb b--dark-gray">
+      <ul class="dashboard-list sidebar-stars list ma0 ph0 pt0 pb3 bb b--dark-gray ph5">
         <sidebar-item
           class="all-stars"
           :class="{ 'selected': tagFilter == 'ALL' }"
           @click.native="resetTag"
           title="All Stars"
           icon="inbox"
-          icon-size="3"
+          icon-size="16"
         ></sidebar-item>
         <sidebar-item
           class="untagged-stars"
           :class="{ 'selected': tagFilter == 'UNTAGGED' }"
           @click.native="showUntagged"
           title="Untagged Stars"
-          icon="stars"
-          icon-size="3"
+          icon="star"
+          icon-size="16"
         ></sidebar-item>
       </ul>
       <sidebar-header title="Tags">
         <div class="sidebar-sortDropdown">
-          <button class="bn bg-transparent mid-gray f6 ttu flex items-center outline-0 cur-p" :class="{'active': sortTagsDropdownVisible}" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible"><i class="material-icons f4">swap_vert</i> Sort</button>
+          <button class="bn bg-transparent mid-gray f6 ttu flex items-center outline-0 cur-p" :class="{'active': sortTagsDropdownVisible}" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible"><i class="fa fa-sort mr1"></i> Sort</button>
           <sort-tags-dropdown :visible="sortTagsDropdownVisible" v-on-clickaway="hideSortTagsDropdown"></sort-tags-dropdown>
         </div>
       </sidebar-header>
       <new-tag-form @submit="doAddTag"></new-tag-form>
-      <transition-group name="sidebar-tags" tag="ul" class="dashboard-list sidebar-tags list ma0 pa0 pb3 bb b--dark-gray">
+      <transition-group name="sidebar-tags" tag="ul" class="dashboard-list sidebar-tags list ma0 pa0 pb3 bb b--dark-gray ph4">
         <sidebar-item
           v-for="tag in tags" :key="tag.id"
           :data-id="tag.id"
-          class="tag"
+          class="tag ph2 br3"
           :class="{ 'selected': currentTag.id == tag.id }"
           ref="tag"
           @click.native="setTag(tag)"
           :title="tag.name"
-          icon="local_offer"
-          icon-size="4"
+          icon="tag"
+          icon-size="14"
           :badge="tag.stars_count"
         ></sidebar-item>
       </transition-group>
@@ -58,7 +58,8 @@ import dragula from 'dragula'
 import SidebarHeader from './sidebar/sidebar-header.vue'
 import SidebarItem from './sidebar/sidebar-item.vue'
 import NewTagForm from './sidebar/new-tag-form.vue'
-import SortTagsDropdown from './sort-tags-dropdown.vue'
+import SortTagsDropdown from './sidebar/sort-tags-dropdown.vue'
+import RefreshButton from './sidebar/refresh-button.vue'
 
 export default {
   name: 'DashboardSidebar',
@@ -66,7 +67,8 @@ export default {
     'sidebar-header': SidebarHeader,
     'sidebar-item': SidebarItem,
     'new-tag-form': NewTagForm,
-    'sort-tags-dropdown': SortTagsDropdown
+    'sort-tags-dropdown': SortTagsDropdown,
+    'refresh-button': RefreshButton
   },
   mixins: [clickaway],
   data () {
@@ -87,10 +89,12 @@ export default {
     ])
   },
   watch: {
-    tags () {
-      setTimeout(() => {
-        this.bindTagItemDragListeners()
-      }, 1)
+    tags (newVal, oldVal) {
+      if (newVal.length !== oldVal.length) {
+        setTimeout(() => {
+          this.bindTagItemDragListeners()
+        }, 1)
+      }
     }
   },
   created () {
@@ -162,9 +166,6 @@ export default {
       'setCurrentTag',
       'cleanupStars'
     ]),
-    testo (v) {
-      console.log(v)
-    },
     bindTagItemDragListeners () {
       $('.dashboard-list-item.tag').off('dragover dragleave drop')
       $('.dashboard-list-item.tag').on('dragover', function (e) {
@@ -280,25 +281,6 @@ $sidebar-width: 280px;
       width: 168px;
     }
   }
-  .refresh-stars {
-    appearance: none;
-    background: rgba(#fff, 0);
-    border: none;
-    cursor: pointer;
-    outline: none;
-    width: 24px; height: 24px;
-    .material-icons {
-      transition: color 250ms ease;
-    }
-    &:hover {
-      .material-icons { color: $silver; }
-    }
-    &.active {
-      animation: spin 750ms linear 0s infinite;
-      opacity: 0.75;
-      pointer-events: none;
-    }
-  }
   .sidebar-tags {
     &-enter, &-leave-to {
       transform: translate3d(-100%, 0, 0);
@@ -306,6 +288,9 @@ $sidebar-width: 280px;
     }
     &-leave-active {
       position: absolute;
+    }
+    .tag svg {
+      position: relative; top: 1px
     }
   }
   .sidebar-sortDropdown button {

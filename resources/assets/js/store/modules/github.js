@@ -133,7 +133,7 @@ const actions = {
     })
   },
   fetchReadme ({ commit }, { name, accessToken }) {
-    Stars.fetchReadme(name, accessToken).then((res) => {
+    return Stars.fetchReadme(name, accessToken).then((res) => {
       commit(SET_README, res)
     })
   },
@@ -141,27 +141,17 @@ const actions = {
     commit(SET_CURRENT_STAR, star)
   },
   editStarNotes ({ commit }, { star, text }) {
-    return new Promise((resolve, reject) => {
-      Stars.editStarNotes(star, text).then((res) => {
-        commit(SET_REPO_NOTES, { id: res.message.repo_id, notes: res.message.notes })
-        resolve(res.message.notes)
-      }, (res) => {
-        reject(res)
-      })
+    return Stars.editStarNotes(star, text).then((res) => {
+      commit(SET_REPO_NOTES, { id: res.message.repo_id, notes: res.message.notes })
     })
   },
   tagStar ({ commit, state }, data) {
-    return new Promise((resolve, reject) => {
-      Stars.tagStar(data).then((res) => {
-        commit(SET_TAGS, res.message.tags)
-        commit(SET_REPO_TAGS, { id: res.message.star.repo_id, tags: res.message.star.tags })
-        if (state.currentStar.id === data.repoId) {
-          commit(SET_CURRENT_STAR, state.githubStars.find(repo => repo.id === res.message.star.repo_id))
-        }
-        resolve(res.message)
-      }, (res) => {
-        reject(res)
-      })
+    return Stars.tagStar(data).then((res) => {
+      commit(SET_TAGS, res.message.tags)
+      commit(SET_REPO_TAGS, { id: res.message.star.repo_id, tags: res.message.star.tags })
+      if (state.currentStar.id === data.repoId) {
+        commit(SET_CURRENT_STAR, state.githubStars.find(repo => repo.id === res.message.star.repo_id))
+      }
     })
   }
 }

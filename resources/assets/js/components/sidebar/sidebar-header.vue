@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-header flex items-center h2 mv3 relative">
+  <div class="sidebar-header flex items-center h2 mv3 relative ph5">
     <h3 class="sidebar-header-text dib m0 mid-gray grow-1 f6 fw6 ttu">{{ title }}</h3>
     <div class="sidebar-header-control">
       <slot></slot>

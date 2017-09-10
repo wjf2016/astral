@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import VueFeatherIcon from 'vue-feather-icon'
 import App from './components/app.vue'
 import Auth from './components/auth.vue'
 import Dashboard from './components/dashboard.vue'
@@ -9,6 +10,7 @@ import store from './store'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
+Vue.use(VueFeatherIcon)
 
 const router = new VueRouter({
   mode: 'history',

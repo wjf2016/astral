@@ -1,7 +1,7 @@
 import { Promise } from 'es6-promise'
 
 import { SET_USER } from '../mutation-types.js'
-import user from '../api/user'
+import User from '../api/user'
 
 const state = {
   user: {}
@@ -19,33 +19,18 @@ export const mutations = {
 
 const actions = {
   fetchUser ({ commit }) {
-    return new Promise((resolve, reject) => {
-      user.fetch().then((res) => {
-        commit(SET_USER, res.message)
-        resolve(res.message)
-      }, (res) => {
-        reject(res)
-      })
+    return User.fetch().then((res) => {
+      commit(SET_USER, res.message)
     })
   },
   setUserAutoTag ({ commit }, state) {
-    return new Promise((resolve, reject) => {
-      user.setAutoTag(state).then((res) => {
-        commit(SET_USER, res.message)
-        resolve(res.message)
-      }, (res) => {
-        reject(res)
-      })
+    return User.setAutoTag(state).then((res) => {
+      commit(SET_USER, res.message)
     })
   },
   setUserSeenPatreonNotice ({ commit }) {
-    return new Promise((resolve, reject) => {
-      user.setSeenPatreonNotice().then((res) => {
-        commit(SET_USER, res.message)
-        resolve(res.message)
-      }, (res) => {
-        reject(res)
-      })
+    return User.setSeenPatreonNotice().then((res) => {
+      commit(SET_USER, res.message)
     })
   }
 }

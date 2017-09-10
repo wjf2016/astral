@@ -281,6 +281,36 @@ $spacing-extra-extra-extra-large: 5rem !default;
   margin-right: $spacing-extra-extra-extra-large;
 }
 
+.ma-auto {
+  margin: auto;
+}
+
+.mv-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.mh-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
 @media #{$breakpoint-not-small} {
   .pa0-ns  {  padding: $spacing-none; }
   .pa1-ns {  padding: $spacing-extra-small; }

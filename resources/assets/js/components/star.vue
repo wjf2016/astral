@@ -2,11 +2,7 @@
 <li class="repo relative bb b--light-gray ma0 pa4 bg-white cur-p">
   <h3 class="repo-name f4 green mt0 mb2 fw6" v-once>{{ repo.full_name }}</h3>
   <div class="repo-description f5 dark-grey" v-once="">{{ repo.description }}</div>
-    <transition-group name="star-tag" tag="ul" class="repo-tags list flex flex-wrap ma0 pa0 mt2">
-      <li v-for="tag in repo.tags" :key="tag.slug" @click.stop="setTag(tag)" class="repo-tag f6 mr2 mb2 bg-gray br-pill white ph2 pv1 cur-p">
-        {{ tag.name }}
-      </li>
-    </transition-group>
+  <star-tags :repo="repo" :tags="starTagList"></star-tags>
   <div class="repo-stats flex mt2">
     <div class="repo-stat stars f6 mid-gray mr2"><i class="fa fa-star"></i> <span v-once>{{ repo.stargazers_count }}</span></div>
     <div class="repo-stat forks f6 mid-gray mr2"><i class="fa fa-code-fork"></i> <span v-once>{{ repo.forks_count }}</span></div>
@@ -16,9 +12,35 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import StarTags from './star-tags.vue'
 export default {
   name: 'Star',
+  components: {
+    'star-tags': StarTags
+  },
   props: ['repo'],
+  computed: {
+    ...mapGetters([
+      'tags'
+    ]),
+    starTagList () {
+      if (this.repo.tags.length === 0) { return this.tags }
+
+      return this.tags.map((tag) => {
+        var isSelected = false
+        isSelected = this.repo.tags.map((starTag) => {
+          return starTag.id
+        }).indexOf(tag.id) > -1
+        return {
+          id: tag.id,
+          name: tag.name,
+          slug: tag.slug,
+          selected: isSelected
+        }
+      })
+    }
+  },
   methods: {
     setTag (tag) {
       this.$router.push(`/dashboard/tag/${tag.slug}`)

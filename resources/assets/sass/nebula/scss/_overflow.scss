@@ -31,6 +31,8 @@
 .overflow-y-scroll { overflow-y: scroll; }
 .overflow-y-auto { overflow-y: auto; }
 
+.t-overflow-ellipsis { text-overflow: ellipsis; }
+
 @media #{$breakpoint-not-small} {
   .overflow-visible-ns { overflow: visible; }
   .overflow-hidden-ns { overflow: hidden; }

@@ -4,7 +4,12 @@
       <span>{{ currentTagName }}</span>
     </h2>
     <edit-tag-dropdown v-if="currentTagExists()"></edit-tag-dropdown>
-    <div class="dashboard-status ml3 steel-blue flex" v-show="status != ''"><div class="status-spinner w1 h1 o-50 br-100"></div> <span>{{ status }}</span></div>
+    <transition name="dashboard-status">
+      <div class="dashboard-status ml3 mid-gray flex items-center" v-show="status != ''">
+        <div class="status-spinner w1 h1 o-50 br-100 mr1"></div>
+        <span>{{ status }}</span>
+      </div>
+    </transition>
     <!-- <div class="dashboard-userDropdown" @click.stop="userDropdownVisible = !userDropdownVisible">
       <img :src="user.avatar_url" :alt="user.name" class="dashboard-userDropdownAvatar"/>
       <span class="dashboard-userDropdownName">{{ user.username }}</span>
@@ -81,12 +86,17 @@ export default {
   height: 80px;
 }
 .dashboard-status {
+  &-enter-active, &-leave-active {
+    transition: opacity 250ms ease;
+  }
+  &-enter, &-leave-to {
+    opacity: 0;
+  }
   .status-spinner {
     animation: spin 1.2s backwards infinite linear;
     border: 2px solid;
     border-top-color: $dark-gray;
-    color: rgba($dark-gray, 0.5);
-    margin-right: 5px;
+    color: $gray;
   }
 }
 

@@ -1,8 +1,14 @@
 <template>
-<div class="dashboard-list-item toggle-new-tag h3 relative">
+<div class="dashboard-list-item toggle-new-tag h3 relative ph5">
   <transition name="new-tag-form">
     <div class="toggle-new-tag-button flex items-center f5 fw6 mid-gray h3" @click="showForm" v-show="!formShowing">
-      <i class="material-icons mr2 pe-n f4">add_circle_outline</i>
+      <!-- <i class="material-icons mr2 pe-n f4">add_circle_outline</i> -->
+      <feather-icon
+      type="plus-circle"
+      height="14"
+      class="mr1 pe-n stroke-mid-gray"
+    >
+    </feather-icon>
       <span class="dashboard-list-item-name relative grow-1">Add a tag...</span>
     </div>
   </transition>
@@ -46,8 +52,12 @@ export default {
 @import "../../../sass/nebula/scss/colors";
 .toggle-new-tag-button {
   transition: color 250ms ease;
+  svg {
+    transition: stroke 250ms ease;
+  }
   &:hover {
     color: $silver;
+    svg { stroke: $silver; }
   }
 }
 .new-tag-form-enter-active, .new-tag-form-leave-active {

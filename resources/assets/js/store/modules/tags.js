@@ -1,176 +1,111 @@
-import { Promise } from "es6-promise";
+import { Promise } from 'es6-promise'
 
 import {
   ADD_TAG,
-  SET_NEW_TAG,
   SET_TAGS,
-  RESET_NEW_TAG,
   SET_TAG_FILTER,
   SET_CURRENT_TAG,
-  SET_CURRENT_STAR,
   RESET_CURRENT_TAG,
   EDIT_TAG_NAMES_ON_STARS,
   SET_REPO_TAGS,
   REMOVE_TAG_FROM_STARS
-} from "../mutation-types.js";
+} from '../mutation-types.js'
 
-import Tags from "../api/tags";
-import Stars from "../api/stars";
+import Tags from '../api/tags'
+import Stars from '../api/stars'
 
 const state = {
   tags: [],
   currentTag: {},
-  tagFilter: "ALL"
-};
+  tagFilter: 'ALL'
+}
 
 const getters = {
   tags: state => state.tags,
   currentTag: state => state.currentTag,
   tagFilter: state => state.tagFilter
-};
+}
 
 export const mutations = {
-  [ADD_TAG](state, tag) {
-    state.tags = state.tags.concat([tag]);
+  [ADD_TAG] (state, tag) {
+    state.tags = state.tags.concat([tag])
   },
-  [SET_TAGS](state, tags) {
-    state.tags = tags;
+  [SET_TAGS] (state, tags) {
+    state.tags = tags
   },
-  [SET_TAG_FILTER](state, filter) {
-    state.tagFilter = filter;
+  [SET_TAG_FILTER] (state, filter) {
+    state.tagFilter = filter
   },
-  [SET_CURRENT_TAG](state, tag) {
-    state.currentTag = Object.assign({}, state.currentTag, tag);
+  [SET_CURRENT_TAG] (state, tag) {
+    state.currentTag = Object.assign({}, state.currentTag, tag)
   },
-  [RESET_CURRENT_TAG](state) {
-    state.currentTag = {};
+  [RESET_CURRENT_TAG] (state) {
+    state.currentTag = {}
   }
-};
+}
 
 const actions = {
-  fetchTags({ commit }) {
-    return new Promise((resolve, reject) => {
-      Tags.fetch().then(
-        res => {
-          commit(SET_TAGS, res.message);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  fetchTags ({ commit }) {
+    return Tags.fetch().then((res) => {
+      commit(SET_TAGS, res.message)
+    })
   },
-  addTag({ commit }, name) {
-    return new Promise((resolve, reject) => {
-      Tags.add({ name }).then(
-        res => {
-          commit(ADD_TAG, res.message);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  addTag ({ commit }, name) {
+    return Tags.add({ name }).then((res) => {
+      commit(ADD_TAG, res.message)
+    })
   },
-  reorderTags({ commit }, sortMap) {
-    return new Promise((resolve, reject) => {
-      Tags.reorder(sortMap).then(
-        res => {
-          commit(SET_TAGS, res.message);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  reorderTags ({ commit }, sortMap) {
+    return Tags.reorder(sortMap).then((res) => {
+      commit(SET_TAGS, res.message)
+    })
   },
-  syncTags({ commit, rootState }, { repo, tags }) {
-    return new Promise((resolve, reject) => {
-      Tags.sync(repo, tags).then(
-        res => {
-          commit(
-            SET_CURRENT_STAR,
-            rootState.github.githubStars.find(
-              repo => repo.id === res.message.star.repo_id
-            )
-          );
-          commit(SET_REPO_TAGS, {
-            id: res.message.star.repo_id,
-            tags: res.message.star.tags
-          });
-          commit(SET_TAGS, res.message.tags);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  syncTags ({ commit, rootState }, { repo, tags }) {
+    return Tags.sync(repo, tags).then((res) => {
+      commit(SET_REPO_TAGS, {
+        id: res.message.star.repo_id,
+        tags: res.message.star.tags
+      })
+      commit(SET_TAGS, res.message.tags)
+    })
   },
-  editTagName({ commit }, { id, name }) {
-    return new Promise((resolve, reject) => {
-      Tags.edit(id, name).then(
-        res => {
-          commit(SET_TAGS, res.message.tags);
-          commit(SET_CURRENT_TAG, res.message.tag);
-          setTimeout(() => {
-            commit(EDIT_TAG_NAMES_ON_STARS, {
-              id: id,
-              newTag: res.message.tag
-            });
-            resolve(res.message.tag);
-          }, 0);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  editTagName ({ commit }, { id, name }) {
+    return Tags.edit(id, name).then((res) => {
+      commit(SET_TAGS, res.message.tags)
+      commit(SET_CURRENT_TAG, res.message.tag)
+      setTimeout(() => {
+        commit(EDIT_TAG_NAMES_ON_STARS, {
+          id: id,
+          newTag: res.message.tag
+        })
+      }, 0)
+    })
   },
-  deleteTag({ commit }, id) {
-    return new Promise((resolve, reject) => {
-      Tags.delete(id).then(
-        res => {
-          commit(REMOVE_TAG_FROM_STARS, id);
-          commit(SET_TAGS, res.message);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  deleteTag ({ commit }, id) {
+    return Tags.delete(id).then((res) => {
+      commit(REMOVE_TAG_FROM_STARS, id)
+      commit(SET_TAGS, res.message)
+    })
   },
-  setCurrentTag({ commit }, tag) {
-    commit(SET_CURRENT_TAG, tag);
+  cleanupStars ({ commit }) {
+    return Stars.cleanup().then((res) => {
+      commit(SET_TAGS, res.message.tags)
+    })
   },
-  setTagFilter({ commit }, filter) {
-    commit(SET_TAG_FILTER, filter);
+  setCurrentTag ({ commit }, tag) {
+    commit(SET_CURRENT_TAG, tag)
   },
-  resetCurrentTag({ commit }) {
-    commit(RESET_CURRENT_TAG);
+  setTagFilter ({ commit }, filter) {
+    commit(SET_TAG_FILTER, filter)
   },
-  cleanupStars({ commit }) {
-    return new Promise((resolve, reject) => {
-      Stars.cleanup().then(
-        res => {
-          commit(SET_TAGS, res.message.tags);
-          resolve(res.message);
-        },
-        res => {
-          reject(res);
-        }
-      );
-    });
+  resetCurrentTag ({ commit }) {
+    commit(RESET_CURRENT_TAG)
   }
-};
+}
 
 export default {
   state,
   getters,
   actions,
   mutations
-};
+}
