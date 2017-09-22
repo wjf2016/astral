@@ -8,43 +8,19 @@
         <refresh-button :active="refreshingStars" @click.native="refreshStars"></refresh-button>
       </sidebar-header>
       <ul class="dashboard-list sidebar-stars list ma0 ph0 pt0 pb3 bb b--dark-gray ph5">
-        <sidebar-item
-          class="all-stars"
-          :class="{ 'selected': tagFilter == 'ALL' }"
-          @click.native="resetTag"
-          title="All Stars"
-          icon="inbox"
-          icon-size="16"
-        ></sidebar-item>
-        <sidebar-item
-          class="untagged-stars"
-          :class="{ 'selected': tagFilter == 'UNTAGGED' }"
-          @click.native="showUntagged"
-          title="Untagged Stars"
-          icon="star"
-          icon-size="16"
-        ></sidebar-item>
+        <sidebar-item class="all-stars" :class="{ 'selected': tagFilter == 'ALL' }" @click.native="resetTag" title="All Stars" icon="inbox" icon-size="16"></sidebar-item>
+        <sidebar-item class="untagged-stars" :class="{ 'selected': tagFilter == 'UNTAGGED' }" @click.native="showUntagged" title="Untagged Stars" icon="star" icon-size="16"></sidebar-item>
       </ul>
       <sidebar-header title="Tags">
         <div class="sidebar-sortDropdown">
-          <button class="bn bg-transparent mid-gray f6 ttu flex items-center outline-0 cur-p" :class="{'active': sortTagsDropdownVisible}" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible"><i class="fa fa-sort mr1"></i> Sort</button>
+          <button class="bn bg-transparent mid-gray f6 ttu flex items-center outline-0 cur-p" :class="{'active': sortTagsDropdownVisible}" @click.stop="sortTagsDropdownVisible = !sortTagsDropdownVisible">
+            <i class="fa fa-sort mr1 pr0"></i> Sort</button>
           <sort-tags-dropdown :visible="sortTagsDropdownVisible" v-on-clickaway="hideSortTagsDropdown"></sort-tags-dropdown>
         </div>
       </sidebar-header>
       <new-tag-form @submit="doAddTag"></new-tag-form>
       <transition-group name="sidebar-tags" tag="ul" class="dashboard-list sidebar-tags list ma0 pa0 pb3 bb b--dark-gray ph4">
-        <sidebar-item
-          v-for="tag in tags" :key="tag.id"
-          :data-id="tag.id"
-          class="tag ph2 br3"
-          :class="{ 'selected': currentTag.id == tag.id }"
-          ref="tag"
-          @click.native="setTag(tag)"
-          :title="tag.name"
-          icon="tag"
-          icon-size="14"
-          :badge="tag.stars_count"
-        ></sidebar-item>
+        <sidebar-item v-for="tag in tags" :key="tag.id" :data-id="tag.id" class="tag ph2 br3" :class="{ 'selected': currentTag.id == tag.id }" ref="tag" @click.native="setTag(tag)" :title="tag.name" icon="tag" icon-size="14" :badge="tag.stars_count" :star-target="true" @starDropped="tagStarWithData"></sidebar-item>
       </transition-group>
     </div>
   </div>
@@ -87,15 +63,6 @@ export default {
       'tagFilter',
       'githubStars'
     ])
-  },
-  watch: {
-    tags (newVal, oldVal) {
-      if (newVal.length !== oldVal.length) {
-        setTimeout(() => {
-          this.bindTagItemDragListeners()
-        }, 1)
-      }
-    }
   },
   created () {
     this.fetchTags().then(() => {
@@ -166,27 +133,6 @@ export default {
       'setCurrentTag',
       'cleanupStars'
     ]),
-    bindTagItemDragListeners () {
-      $('.dashboard-list-item.tag').off('dragover dragleave drop')
-      $('.dashboard-list-item.tag').on('dragover', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        e.target.classList.add('dragging')
-      })
-      $('.dashboard-list-item.tag').on('dragleave', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        e.target.classList.remove('dragging')
-      })
-      $('.dashboard-list-item.tag').on('drop', (e) => {
-        const dropData = JSON.parse(e.originalEvent.dataTransfer.getData('text'))
-        const tagId = e.currentTarget.dataset.id
-        e.preventDefault()
-        e.stopPropagation()
-        e.target.classList.remove('dragging')
-        this.tagStarWithData(dropData, tagId)
-      })
-    },
     showNewTagForm () {
       this.addTagFormShowing = true
       setTimeout(() => {
@@ -205,11 +151,11 @@ export default {
         }
       })
     },
-    tagStarWithData: function (data, tagId) {
+    tagStarWithData: function ({data, id}) {
       const starData = {
         repoId: data.id,
         repoName: data.full_name,
-        tagId
+        tagId: parseInt(id, 10)
       }
       this.tagStar(starData)
     },
@@ -269,9 +215,14 @@ export default {
 $sidebar-width: 280px;
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
+
 .dashboard-sidebar {
   width: $sidebar-width;
   .dashboard-brand {
@@ -282,7 +233,8 @@ $sidebar-width: 280px;
     }
   }
   .sidebar-tags {
-    &-enter, &-leave-to {
+    &-enter,
+    &-leave-to {
       transform: translate3d(-100%, 0, 0);
       opacity: 0;
     }
@@ -290,19 +242,16 @@ $sidebar-width: 280px;
       position: absolute;
     }
     .tag svg {
-      position: relative; top: 1px
+      position: relative;
+      top: 1px
     }
   }
   .sidebar-sortDropdown button {
     transition: color 250ms ease;
-    &:hover, &.active {
+    &:hover,
+    &.active {
       color: $silver;
     }
   }
 }
-
-//Dragula clone-url
-.dashboard-list-item.gu-mirror {
-}
-
 </style>

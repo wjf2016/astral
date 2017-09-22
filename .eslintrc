@@ -1,4 +1,7 @@
 {
   "plugins": ["vue"],
-  "extends": "vue"
+  "extends": ["vue"],
+  "rules": {
+    "space-before-function-paren": 0
+  }
 }

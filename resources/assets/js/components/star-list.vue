@@ -1,18 +1,7 @@
 <template>
   <div class="dashboard-star-container absolute overflow-y-auto bottom-0 br b--light-gray">
     <ul class="repos list ma0 pa0">
-      <star
-        v-for="(repo, index) in starsList"
-        :key="repo.id"
-        :repo="repo"
-        :class="{ 'active': currentStar.id == repo.id }"
-        :data-id="repo.id"
-        @click.native="starClicked(repo)"
-        @dragstart.native="starDragged($event)"
-        @dragend.native="clearClonedRepoNodes($event)"
-        draggable="true"
-        ref="repo"
-      >
+      <star v-for="(repo, index) in starsList" :key="repo.id" :repo="repo" :class="{ 'active': currentStar.id == repo.id }" :data-id="repo.id" @click.native="starClicked(repo)" @dragstart.native="starDragged($event)" @dragend.native="clearClonedRepoNodes" draggable="true" ref="repo">
       </star>
     </ul>
   </div>
@@ -51,15 +40,6 @@ export default {
       this.cleanupStars().then((res) => {
         this.$bus.$emit('STATUS', '')
       })
-      Array.from(document.querySelectorAll('.repo')).forEach((repo) => {
-        repo.addEventListener('dragstart', (e) => {
-          const data = JSON.stringify(
-            this.githubStars.find(repo => repo.id === parseInt(e.currentTarget.dataset.id, 10))
-          )
-          e.dataTransfer.effectAllowed = 'move'
-          e.dataTransfer.setData('text/plain', data)
-        }, false)
-      })
     }).catch((errors) => {
       this.$bus.$emit('STATUS', '')
       this.$bus.$emit('NOTIFICATION', 'There was an error fetching your stars from GitHub.', 'error')
@@ -94,18 +74,17 @@ export default {
       }
     },
     starDragged (e) {
+      let width, height
       const el = e.currentTarget
       const clone = el.cloneNode(true)
-      clone.classList.add('repo-clone')
+      clone.id = 'repo-clone'
       document.body.appendChild(clone)
-      const width = clone.offsetWidth
-      const height = clone.offsetHeight
+      width = clone.offsetWidth
+      height = clone.offsetHeight
       e.dataTransfer.setDragImage(clone, width / 2, height / 2)
     },
     clearClonedRepoNodes () {
-      [].forEach.call(document.querySelectorAll('.repo-clone'), (e) => {
-        e.parentNode.removeChild(e)
-      })
+      document.getElementById('repo-clone').remove()
     }
   }
 }
@@ -117,16 +96,23 @@ export default {
   left: 280px;
   width: 400px;
 }
-.repo-clone {
+
+#repo-clone {
   transform: translate3d(-50%, -50%, 0);
   border-radius: .375rem;
-  position: absolute; top: -9999px; left: -9999px;
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
   list-style-type: none;
   padding: .875rem;
   h3 {
     margin: 0;
   }
-  &::before { display: none; }
-  *:not(.repo-name) { display: none; }
+  &::before {
+    display: none;
+  }
+  *:not(.repo-name) {
+    display: none;
+  }
 }
 </style>
